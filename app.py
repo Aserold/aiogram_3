@@ -1,29 +1,26 @@
 import asyncio
 
 from aiogram import Bot, Dispatcher, types
-from aiogram.filters import CommandStart
 
 from config import TOKEN
+from handlers.user_group import user_group_rt
+from handlers.user_private import user_private_rt
+from common.bot_cmd import private
+
+ALLOWED_UPDATES = ['message', 'edited_message']
 
 bot = Bot(token=TOKEN)
-
 dp = Dispatcher()
 
-
-@dp.message(CommandStart())
-async def start_task(message: types.Message):
-    name = message.from_user.first_name
-    await message.answer(f'Ну привет, {name}!😈')
-
-
-@dp.message()
-async def echo(message: types.Message):
-    await message.answer(message.text)
+dp.include_router(user_private_rt)
+dp.include_router(user_group_rt)
 
 
 async def main():
     await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
+    # await bot.delete_my_commands(scope=types.BotCommandScopeAllPrivateChats())
+    await bot.set_my_commands(commands=private, scope=types.BotCommandScopeAllPrivateChats())
+    await dp.start_polling(bot, allowed_updates=ALLOWED_UPDATES)
 
 
 if __name__ == '__main__':
