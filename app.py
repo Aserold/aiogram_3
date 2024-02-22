@@ -1,6 +1,7 @@
 import asyncio
 
 from aiogram import Bot, Dispatcher, types
+from aiogram.enums import ParseMode
 
 from config import TOKEN
 from handlers.user_group import user_group_rt
@@ -9,7 +10,7 @@ from common.bot_cmd import private
 
 ALLOWED_UPDATES = ['message', 'edited_message']
 
-bot = Bot(token=TOKEN)
+bot = Bot(token=TOKEN, parse_mode=ParseMode.HTML)
 dp = Dispatcher()
 
 dp.include_router(user_private_rt)
