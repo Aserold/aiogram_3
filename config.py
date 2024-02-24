@@ -5,3 +5,4 @@ load_dotenv()
 
 TOKEN = os.environ.get('TOKEN')
 DB_LITE = os.environ.get('DB_LITE')
+DB_PG = os.environ.get('DB_PG')
