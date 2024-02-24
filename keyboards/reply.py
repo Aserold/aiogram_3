@@ -1,52 +1,32 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, KeyboardButtonPollType
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-start_kb = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text='Меню'),
-            KeyboardButton(text='О боте'),
-        ],
-        [
-            KeyboardButton(text='Оплата'),
-            KeyboardButton(text='Доставка'),
-        ],
-        [
-            KeyboardButton(text='Поддержка'),
-        ],
-    ],
-    resize_keyboard=True,
-    input_field_placeholder='Выберите кнопку'
-)
 
-del_kb = ReplyKeyboardRemove()
+def create_kb_reply(
+        *buttons: str,
+        placeholder: str = None,
+        request_location: int = None,
+        request_contact: int = None,
+        sizes: tuple[int, ...] = (2,)
+):
+    """
+    Create reply keyboard
 
+    :param buttons:
+    :param placeholder:
+    :param request_location:
+    :param request_contact:
+    :param sizes:
+    :return:
+    """
+    keyboard = ReplyKeyboardBuilder()
 
-start_kb2 = ReplyKeyboardBuilder()
-start_kb2.add(
-    KeyboardButton(text='Меню'),
-    KeyboardButton(text='О боте'),
-    KeyboardButton(text='Оплата'),
-    KeyboardButton(text='Доставка'),
-    KeyboardButton(text='Поддержка'),
-)
-start_kb2.adjust(2, 3)
+    for index, text in enumerate(buttons, start=0):
+        if request_contact is not None and request_contact == index:
+            keyboard.add(KeyboardButton(text=text, request_contact=True))
+        elif request_location is not None and request_location == index:
+            keyboard.add(KeyboardButton(text=text, request_location=True))
+        else:
+            keyboard.add(KeyboardButton(text=text))
 
-
-start_kb3 = ReplyKeyboardBuilder()
-start_kb3.attach(start_kb2)
-start_kb3.row(KeyboardButton(text='Оставить отзыв'))
-
-
-test_kb = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text='Poll', request_poll=KeyboardButtonPollType()),
-        ],
-        [
-            KeyboardButton(text='Numba', request_contact=True),
-            KeyboardButton(text='gimme that lo', request_location=True)
-        ]
-    ],
-    resize_keyboard=True
-)
+    return keyboard.adjust(*sizes).as_markup(resize_keyboard=True, input_field_placeholder=placeholder)
